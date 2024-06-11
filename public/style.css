@@ -39,3 +39,28 @@ button {
     border-radius: 5px;
     cursor: pointer;
 }
+
+#emoji-picker {
+    position: absolute;
+    bottom: 60px; /* 距離聊天框上方 */
+    left: 10px; /* 距離聊天框左側 */
+    display: none;
+    z-index: 1000; /* 確保在最上層顯示 */
+}
+
+#emoji-button {
+    padding: 10px;
+    border: none;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+#room-selector {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
