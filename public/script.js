@@ -10,6 +10,7 @@ const createRoomButton = document.getElementById('create-room-button');
 const inviteCodeDisplay = document.getElementById('invite-code-display');
 const joinRoomButton = document.getElementById('join-room-button');
 const inviteCodeInput = document.getElementById('invite-code-input');
+const roomSelector = document.getElementById('room-selector');
 
 let currentRoomID = 'general';
 
@@ -30,7 +31,7 @@ socket.on('chat message', function(msg) {
     const item = document.createElement('li');
     item.innerHTML = `<strong>${msg.username}:</strong> ${msg.message}`;
     messages.appendChild(item);
-    window.scrollTo(0, document.body.scrollHeight);
+    messages.scrollTop = messages.scrollHeight;
 });
 
 createRoomButton.addEventListener('click', function() {
@@ -40,6 +41,11 @@ createRoomButton.addEventListener('click', function() {
 socket.on('room created', function({ roomID, inviteCode }) {
     currentRoomID = roomID;
     inviteCodeDisplay.textContent = `Invite Code: ${inviteCode}`;
+    const option = document.createElement('option');
+    option.value = roomID;
+    option.textContent = `Room ${roomID}`;
+    roomSelector.appendChild(option);
+    roomSelector.value = roomID;
 });
 
 joinRoomButton.addEventListener('click', function() {
@@ -57,6 +63,11 @@ socket.on('room joined', function(roomID) {
 
 socket.on('invalid invite code', function() {
     alert('Invalid invite code!');
+});
+
+roomSelector.addEventListener('change', function() {
+    currentRoomID = roomSelector.value;
+    socket.emit('join room', { inviteCode: currentRoomID, username: usernameInput.value.trim() });
 });
 
 emojiButton.addEventListener('click', function() {

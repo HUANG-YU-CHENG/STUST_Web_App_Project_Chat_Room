@@ -10,7 +10,9 @@ const io = socketIo(server);
 const PORT = process.env.PORT || 3000;
 
 // 存储房间和邀请码的映射
-const rooms = {};
+const rooms = {
+    general: 'general' // 初始公共聊天室
+};
 
 app.use(express.static('public'));
 

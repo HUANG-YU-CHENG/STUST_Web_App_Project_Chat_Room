@@ -9,18 +9,20 @@
 </head>
 <body>
     <div id="chat-container">
-        <input id="username-input" placeholder="Enter your username" autocomplete="off" />
-        <div id="create-room-container">
+        <div id="room-controls">
+            <input id="username-input" placeholder="Enter your username" autocomplete="off" />
+            <select id="room-selector">
+                <option value="general">General Room</option>
+            </select>
             <button id="create-room-button">Create Private Room</button>
-            <p id="invite-code-display"></p>
-        </div>
-        <div id="join-room-container">
             <input id="invite-code-input" placeholder="Enter invite code" autocomplete="off" />
             <button id="join-room-button">Join Room</button>
+            <p id="invite-code-display"></p>
         </div>
         <ul id="messages"></ul>
         <form id="message-form" action="">
-            <input id="message-input" autocomplete="off" /><button>Send</button>
+            <input id="message-input" autocomplete="off" placeholder="Type your message" />
+            <button>Send</button>
             <button type="button" id="emoji-button">😀</button>
         </form>
         <emoji-picker id="emoji-picker" style="display: none;"></emoji-picker>
@@ -29,4 +31,3 @@
     <script src="script.js"></script>
 </body>
 </html>
-
