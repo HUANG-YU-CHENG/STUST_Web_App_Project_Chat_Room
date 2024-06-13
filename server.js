@@ -7,8 +7,8 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-const rooms = { 'GENERAL': 'general' }; // 存储房间信息，键为邀请码，值为房间ID
-let privateRoomCount = 0; // 记录私人聊天室数量
+const rooms = { 'GENERAL': 'general' }; // 存儲房間信息，鍵為邀請碼，值為房間ID
+let privateRoomCount = 0; // 記錄私人聊天室數量
 
 app.use(express.static('public'));
 
@@ -32,7 +32,7 @@ io.on('connection', (socket) => {
         const roomID = rooms[inviteCode.toUpperCase()];
         if (roomID) {
             socket.join(roomID);
-            const roomName = `Private Room ${privateRoomCount}`; // 获取当前私人房间名称
+            const roomName = roomID === 'general' ? 'General Room' : `Private Room ${privateRoomCount}`; // 獲取當前房間名稱
             socket.emit('room joined', { roomID, inviteCode, roomName });
             io.to(roomID).emit('chat message', { roomID, username: 'System', message: `${username} joined the room.` });
         } else {
