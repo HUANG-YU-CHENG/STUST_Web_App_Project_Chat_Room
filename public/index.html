@@ -10,19 +10,19 @@
 <body>
     <div id="chat-container">
         <div id="room-controls">
-            <input id="username-input" placeholder="Enter your username" autocomplete="off" />
+            <input id="username-input" placeholder="請輸入使用者名稱" autocomplete="off" />
             <select id="room-selector">
-                <option value="general">General Room</option>
+                <option value="general">聊天大廳</option>
             </select>
-            <button id="create-room-button">Create Private Room</button>
-            <input id="invite-code-input" placeholder="Enter invite code" autocomplete="off" />
-            <button id="join-room-button">Join Room</button>
+            <button id="create-room-button">建立私人聊天室</button>
+            <input id="invite-code-input" placeholder="請輸入邀請碼" autocomplete="off" />
+            <button id="join-room-button">加入聊天室</button>
             <p id="invite-code-display"></p>
         </div>
         <ul id="messages"></ul>
         <form id="message-form" action="">
-            <input id="message-input" autocomplete="off" placeholder="Type your message" />
-            <button>Send</button>
+            <input id="message-input" autocomplete="off" placeholder="請輸入訊息" />
+            <button>發送訊息</button>
             <button type="button" id="emoji-button">😀</button>
         </form>
         <emoji-picker id="emoji-picker" style="display: none;"></emoji-picker>

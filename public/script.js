@@ -1,16 +1,16 @@
 const socket = io();
 
-const form = document.getElementById('message-form');
-const input = document.getElementById('message-input');
-const messages = document.getElementById('messages');
-const usernameInput = document.getElementById('username-input');
-const emojiButton = document.getElementById('emoji-button');
-const emojiPicker = document.getElementById('emoji-picker');
-const createRoomButton = document.getElementById('create-room-button');
-const inviteCodeDisplay = document.getElementById('invite-code-display');
-const joinRoomButton = document.getElementById('join-room-button');
-const inviteCodeInput = document.getElementById('invite-code-input');
-const roomSelector = document.getElementById('room-selector');
+const form = document.getElementById('message-form'); //訊息表單
+const input = document.getElementById('message-input');//訊息輸入
+const messages = document.getElementById('messages');//訊息
+const usernameInput = document.getElementById('username-input');//使用者名稱輸入
+const emojiButton = document.getElementById('emoji-button');//表情按鈕
+const emojiPicker = document.getElementById('emoji-picker');//表情選擇
+const createRoomButton = document.getElementById('create-room-button');//創立房間按鈕
+const inviteCodeDisplay = document.getElementById('invite-code-display');//邀請碼顯示
+const joinRoomButton = document.getElementById('join-room-button');//加入房間按鈕
+const inviteCodeInput = document.getElementById('invite-code-input');//邀請碼輸入
+const roomSelector = document.getElementById('room-selector');//房間選擇器
 
 let currentRoomID = 'general';
 let username = 'Anonymous';
@@ -104,7 +104,7 @@ emojiButton.addEventListener('click', function() {
     const rect = emojiButton.getBoundingClientRect();
     const viewportHeight = window.innerHeight;
 
-    if (rect.bottom < viewportHeight / 2) {
+    if (rect.bottom < viewportHeight / 2) {//控制選擇器高度
         emojiPicker.style.top = `${rect.bottom + window.scrollY + 10}px`;
         emojiPicker.style.left = `${rect.left + window.scrollX}px`;
     } else {

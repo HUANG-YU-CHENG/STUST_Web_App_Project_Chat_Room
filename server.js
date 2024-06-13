@@ -7,7 +7,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-const rooms = { 'GENERAL': 'general' }; // 存儲房間信息，鍵為邀請碼，值為房間ID
+const rooms = { 'GENERAL': 'general' }; // 儲存房間信息，鍵為邀請碼，值為房間ID
 let privateRoomCount = 0; // 記錄私人聊天室數量
 
 app.use(express.static('public'));
@@ -17,7 +17,7 @@ io.on('connection', (socket) => {
         io.to(roomID).emit('chat message', { roomID, username, message });
     });
 
-    socket.on('create room', ({ username }) => {
+    socket.on('create room', ({ username }) => { //創立房間
         const roomID = uuidv4();
         const inviteCode = generateInviteCode();
         rooms[inviteCode] = roomID;
@@ -25,23 +25,23 @@ io.on('connection', (socket) => {
         const roomName = `Private Room ${privateRoomCount}`;
         socket.join(roomID);
         socket.emit('room created', { roomID, inviteCode, roomName });
-        io.to(roomID).emit('chat message', { roomID, username: 'System', message: `${username} created the room.` });
+        io.to(roomID).emit('chat message', { roomID, username: 'System', message: `${username} 創立聊天室` });
     });
 
-    socket.on('join room', ({ inviteCode, username }) => {
+    socket.on('join room', ({ inviteCode, username }) => { //加入房間
         const roomID = rooms[inviteCode.toUpperCase()];
         if (roomID) {
             socket.join(roomID);
             const roomName = roomID === 'general' ? 'General Room' : `Private Room ${privateRoomCount}`; // 獲取當前房間名稱
             socket.emit('room joined', { roomID, inviteCode, roomName });
-            io.to(roomID).emit('chat message', { roomID, username: 'System', message: `${username} joined the room.` });
+            io.to(roomID).emit('chat message', { roomID, username: 'System', message: `${username} 加入聊天.` });
         } else {
-            socket.emit('invalid invite code');
+            socket.emit('邀請碼錯誤!!');
         }
     });
 });
 
-function generateInviteCode() {
+function generateInviteCode() {//生成邀請碼
     return Math.random().toString(36).substring(2, 8).toUpperCase();
 }
 
