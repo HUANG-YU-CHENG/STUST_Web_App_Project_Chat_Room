@@ -13,14 +13,21 @@ const inviteCodeInput = document.getElementById('invite-code-input');
 const roomSelector = document.getElementById('room-selector');
 
 let currentRoomID = 'general';
+let username = '';
+
+// 更新用户名
+usernameInput.addEventListener('input', function() {
+    username = usernameInput.value.trim() || 'Anonymous';
+    socket.emit('update username', username);
+});
 
 form.addEventListener('submit', function(e) {
     e.preventDefault();
-    const username = usernameInput.value.trim();
-    if (username && input.value && currentRoomID) {
+    const message = input.value;
+    if (username && message && currentRoomID) {
         socket.emit('chat message', {
             roomID: currentRoomID,
-            message: input.value,
+            message: message,
             username: username
         });
         input.value = '';
@@ -28,37 +35,46 @@ form.addEventListener('submit', function(e) {
 });
 
 socket.on('chat message', function(msg) {
-    const item = document.createElement('li');
-    item.innerHTML = `<strong>${msg.username}:</strong> ${msg.message}`;
-    messages.appendChild(item);
-    messages.scrollTop = messages.scrollHeight;
+    if (msg.roomID === currentRoomID) {
+        const item = document.createElement('li');
+        item.innerHTML = `<strong>${msg.username}:</strong> ${msg.message}`;
+        messages.appendChild(item);
+        messages.scrollTop = messages.scrollHeight;
+    }
 });
 
 createRoomButton.addEventListener('click', function() {
-    socket.emit('create room');
+    socket.emit('create room', { username });
 });
 
-socket.on('room created', function({ roomID, inviteCode }) {
+socket.on('room created', function({ roomID, inviteCode, roomName }) {
     currentRoomID = roomID;
     inviteCodeDisplay.textContent = `Invite Code: ${inviteCode}`;
     const option = document.createElement('option');
     option.value = roomID;
-    option.textContent = `Room ${roomID}`;
+    option.textContent = roomName;
     roomSelector.appendChild(option);
     roomSelector.value = roomID;
+    messages.innerHTML = ''; // 清空消息列表
 });
 
 joinRoomButton.addEventListener('click', function() {
-    const inviteCode = inviteCodeInput.value.trim();
-    const username = usernameInput.value.trim();
+    const inviteCode = inviteCodeInput.value.trim().toUpperCase();
     if (inviteCode && username) {
         socket.emit('join room', { inviteCode, username });
     }
 });
 
-socket.on('room joined', function(roomID) {
+socket.on('room joined', function({ roomID, inviteCode, roomName }) {
     currentRoomID = roomID;
     messages.innerHTML = ''; // 清空消息列表，方便显示新房间的消息
+    if (!Array.from(roomSelector.options).some(option => option.value === roomID)) {
+        const option = document.createElement('option');
+        option.value = roomID;
+        option.textContent = roomName;
+        roomSelector.appendChild(option);
+    }
+    roomSelector.value = roomID;
 });
 
 socket.on('invalid invite code', function() {
@@ -67,7 +83,12 @@ socket.on('invalid invite code', function() {
 
 roomSelector.addEventListener('change', function() {
     currentRoomID = roomSelector.value;
-    socket.emit('join room', { inviteCode: currentRoomID, username: usernameInput.value.trim() });
+    if (currentRoomID === 'general') {
+        socket.emit('join room', { inviteCode: 'GENERAL', username: username });
+    } else {
+        socket.emit('join room', { inviteCode: currentRoomID, username: username });
+    }
+    messages.innerHTML = ''; // 清空消息列表
 });
 
 emojiButton.addEventListener('click', function() {
@@ -91,4 +112,5 @@ emojiPicker.addEventListener('emoji-click', function(event) {
 });
 
 // 初始加入公共聊天室
-socket.emit('join room', { inviteCode: 'general', username: 'Anonymous' });
+username = 'Anonymous';
+socket.emit('join room', { inviteCode: 'GENERAL', username: username });
