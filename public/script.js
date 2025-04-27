@@ -16,24 +16,65 @@ const inviteCodeDisplay = document.getElementById('invite-code-display');//邀�
 const joinRoomButton = document.getElementById('join-room-button');//加入房間按鈕
 const inviteCodeInput = document.getElementById('invite-code-input');//邀請碼輸入
 const roomSelector = document.getElementById('room-selector');//房間選擇器
+const logoutButton = document.getElementById('logout-button');//登出按鈕
+const fileInput = document.getElementById('file-input');//文件輸入
+const uploadButton = document.getElementById('upload-button');//上傳按鈕
 
 let currentRoomID = 'general';
 let username = localStorage.getItem('chatUsername') || 'Anonymous';
+let currentFile = null;
 
 // 顯示用戶名
 usernameDisplay.textContent = `使用者: ${username}`;
 
+// 文件上傳按鈕點擊事件
+uploadButton.addEventListener('click', function() {
+    fileInput.click();
+});
+
+// 文件選擇事件
+fileInput.addEventListener('change', function(e) {
+    if (e.target.files.length > 0) {
+        currentFile = e.target.files[0];
+        uploadButton.textContent = currentFile.name;
+    }
+});
+
 // 發送訊息
-form.addEventListener('submit', function(e) {
+form.addEventListener('submit', async function(e) {
     e.preventDefault();
     const message = input.value;
-    if (username && message && currentRoomID) {
+    let fileUrl = null;
+
+    if (currentFile) {
+        const formData = new FormData();
+        formData.append('file', currentFile);
+        
+        try {
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+            fileUrl = data.url;
+        } catch (error) {
+            console.error('上傳失敗:', error);
+            alert('文件上傳失敗');
+            return;
+        }
+    }
+
+    if (username && (message || fileUrl) && currentRoomID) {
         socket.emit('chat message', {
             roomID: currentRoomID,
             message: message,
-            username: username
+            username: username,
+            fileUrl: fileUrl
         });
         input.value = '';
+        currentFile = null;
+        fileInput.value = '';
+        uploadButton.textContent = '上傳文件';
     }
 });
 
@@ -41,7 +82,20 @@ form.addEventListener('submit', function(e) {
 socket.on('chat message', function(msg) {
     if (msg.roomID === currentRoomID) {
         const item = document.createElement('li');
-        item.innerHTML = `<strong>${msg.username}:</strong> ${msg.message}`;
+        let content = `<strong>${msg.username}:</strong> ${msg.message || ''}`;
+        
+        if (msg.fileUrl) {
+            const fileExtension = msg.fileUrl.split('.').pop().toLowerCase();
+            if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
+                content += `<br><img src="${msg.fileUrl}" style="max-width: 300px; max-height: 300px;">`;
+            } else if (['mp3', 'wav'].includes(fileExtension)) {
+                content += `<br><audio controls><source src="${msg.fileUrl}" type="audio/${fileExtension}">您的瀏覽器不支持音頻播放</audio>`;
+            } else {
+                content += `<br><a href="${msg.fileUrl}" target="_blank">下載文件</a>`;
+            }
+        }
+        
+        item.innerHTML = content;
         messages.appendChild(item);
         messages.scrollTop = messages.scrollHeight;
     }
@@ -125,3 +179,9 @@ emojiPicker.addEventListener('emoji-click', function(event) {
 
 // 初始加入公共房間
 socket.emit('join room', { inviteCode: 'GENERAL', username: username });
+
+// 登出功能
+logoutButton.addEventListener('click', function() {
+    localStorage.removeItem('chatUsername');
+    window.location.href = '/login.html';
+});

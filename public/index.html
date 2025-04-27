@@ -11,6 +11,7 @@
     <div id="chat-container">
         <div id="room-controls">
             <div id="username-display"></div>
+            <button id="logout-button">登出</button>
             <select id="room-selector">
                 <option value="general">聊天大廳</option>
             </select>
@@ -22,6 +23,8 @@
         <ul id="messages"></ul>
         <form id="message-form" action="">
             <input id="message-input" autocomplete="off" placeholder="請輸入訊息" />
+            <input type="file" id="file-input" style="display: none;" accept=".jpg,.jpeg,.png,.gif,.mp3,.wav" />
+            <button type="button" id="upload-button">上傳文件</button>
             <button>發送訊息</button>
             <button type="button" id="emoji-button">😀</button>
         </form>
