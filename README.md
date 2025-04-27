@@ -48,7 +48,7 @@ http://localhost:3000
 - 文件處理：Multer
 - 身份驗證：LocalStorage
 
-## 改進建議
+## 未來優化方向?
 
 ### 安全性改進
 1. 實現JWT（JSON Web Token）身份驗證，替代目前的localStorage存儲方式
