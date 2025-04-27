@@ -1,9 +1,14 @@
 const socket = io();
 
+// 檢查是否已登入，如果沒有則重定向到登入頁面
+if (!localStorage.getItem('chatUsername')) {
+    window.location.href = '/login.html';
+}
+
 const form = document.getElementById('message-form'); //訊息表單
 const input = document.getElementById('message-input');//訊息輸入
 const messages = document.getElementById('messages');//訊息
-const usernameInput = document.getElementById('username-input');//使用者名稱輸入
+const usernameDisplay = document.getElementById('username-display');//使用者名稱顯示
 const emojiButton = document.getElementById('emoji-button');//表情按鈕
 const emojiPicker = document.getElementById('emoji-picker');//表情選擇
 const createRoomButton = document.getElementById('create-room-button');//創立房間按鈕
@@ -13,13 +18,10 @@ const inviteCodeInput = document.getElementById('invite-code-input');//邀請碼
 const roomSelector = document.getElementById('room-selector');//房間選擇器
 
 let currentRoomID = 'general';
-let username = 'Anonymous';
+let username = localStorage.getItem('chatUsername') || 'Anonymous';
 
-// 更新用戶名
-usernameInput.addEventListener('input', function() {
-    username = usernameInput.value.trim() || 'Anonymous';
-    socket.emit('update username', username);
-});
+// 顯示用戶名
+usernameDisplay.textContent = `使用者: ${username}`;
 
 // 發送訊息
 form.addEventListener('submit', function(e) {

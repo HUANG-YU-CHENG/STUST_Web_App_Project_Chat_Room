@@ -12,6 +12,11 @@ let privateRoomCount = 0; // 記錄私人聊天室數量
 
 app.use(express.static('public'));
 
+// Serve login page as the default route
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/public/login.html');
+});
+
 io.on('connection', (socket) => {
     socket.on('chat message', ({ roomID, message, username }) => {
         io.to(roomID).emit('chat message', { roomID, username, message });
